@@ -10,6 +10,7 @@ export default class ProductDetails {
 
   async init() {
     this.product = await this.dataSource.findProductById(this.productId);
+    console.log(this.product);
     this.renderProductDetails();
     document
       .getElementById('addToCart')
@@ -29,15 +30,28 @@ export default class ProductDetails {
 }
   function productDetails(product) {
     document.querySelector("#show").innerHTML = `<section class="product-detail">
+    <h2>${product.Category.charAt(0).toUpperCase()} ${product.Category.slice(1)}</h2>
     <h3>${product.Brand.Name}</h3>
     <h2 class="divider">${product.NameWithoutBrand}</h2>
-    <img class="divider" src="${product.Image}" alt="${product.Name}"/>
-    <p class="product-card__price">$${product.ListPrice}</p>
-    <p class="product__color">${product.Colors.ColorName}</p>
+    <picture>
+    <source media="(min-width: 1200px)" srcset="${product.Images.PrimaryExtraLarge}">
+    <source media="(min-width: 800px)" srcset="${product.Images.PrimaryLarge}">
+    <source media="(min-width: 480px)" srcset="${product.Images.PrimaryMedium}">
+    <img class="divider" src="${product.Images.PrimarySmall}" alt="${product.NameWithoutBrand}"/>
+    </picture>     
+    <p class="product-card__price">$${new Intl.NumberFormat('de-DE',{ style: 'currency', currency: 'EUR',}).format(Number(product.FinalPrice) * 0.85)}</p>
+    <p class="product__color">${product.Colors[0].ColorName}</p>
     <p class="product__description">${product.DescriptionHtmlSimple}</p>
     <div class="product-detail__add">
-        <button id="addToCart" data-id="344YJ">Add to Cart</button>
+        <button id="addToCart" data-id=${product.Id}>Add to Cart</button>
     </div>
     </section>
     `;
   }
+
+  // <picture>
+  // <source media="(min-width: 1200px)" srcset="${product.Images.PrimaryExtraLarge}">
+  // <source media="(min-width: 800px)" srcset="${product.Images.PrimaryLarge}">
+  // <source media="(min-width: 480px)" srcset="${product.Images.PrimaryMedium}">
+  // <img class="divider" src="${product.Images.PrimaryExtraLarge}" alt="${product.PrimarySmall}"/>
+  // </picture>
