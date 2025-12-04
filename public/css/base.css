@@ -1,0 +1,308 @@
+:root {
+    --styling-font-title: Tektur, Georgia, serif;
+    --styling-font-text: Raleway, Georgia, sans-serif;
+    --Accent1-Color: #fffb00;
+    --Accent2-color: #060033;
+    --Title-color: #010a18;
+    --Text-color: #fcff47;
+    text-decoration: none;
+}
+
+h1, h2 {
+    font-family: var(--styling-font-title);
+}
+
+h1 {
+    color: var(--Accent2-color);
+}
+ 
+p {
+    font-family: var(--styling-font-text);
+}
+
+header {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    font-size: 2rem;
+}
+
+.siteName a {
+    color: var(--Title-color);
+    text-decoration: none;
+    font-family: var(--styling-font-title);
+}
+
+#tools {
+    justify-self: end;
+}
+
+#tools a {
+    color: var(--Title-color);
+    text-decoration: none;
+    font-family: var(--styling-font-title);
+}
+
+nav ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: var(--Accent1-Color);
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    justify-items: center;
+}
+
+nav ul li a {
+    font-family: var(--styling-font-title);
+    text-decoration: none;
+    color: var(--Accent2-color);
+    padding: 10px;
+}
+
+nav ul li a:hover {
+    background-color: #fdff9f;
+}
+/* Home */
+.hero {
+    position: relative;
+}
+
+.hero img {
+    width: 100%;
+}
+
+article {
+    padding: 10px;
+}
+
+article.car {
+    position: absolute;
+    top: -30px;
+    width: 30%;
+    margin: 20px;
+    padding: .5rem;
+    background-color: #060033a1;  
+    color: var(--Text-color);  
+}
+
+article.car button {
+    padding: 10px;
+    background-color: var(--Accent1-Color);
+    padding: 10px;
+    color: var(--Title-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-family: var(--styling-font-title);
+}
+
+article.car button:hover {
+    padding: 10px;
+    background-color: rgb(255, 187, 0);
+}
+
+article.reviews h2 {
+    color: var(--Accent2-color);
+}
+
+article.reviews ul li {
+    font-size: 1.1rem;
+    padding: 10px;
+    font-family: var(--styling-font-text);
+    color: var(--Accent2-color);
+}
+
+.articles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    column-gap: 10px;
+}
+
+article.upgrades h2 {
+    color: var(--Accent2-color);
+}
+
+.articles figure {
+    text-align: center;
+    margin: 0;
+}
+
+.articles figure img {
+    max-height: 90px;
+    padding: 14px 50px;
+    background-color: var(--Accent1-Color);
+}
+
+/* Inv */
+
+#inv-display{
+    display: grid;
+    grid-template-columns: 1fr;
+    list-style-type: none;
+    justify-items: center;
+    padding: 0 5% 0 0;
+}
+
+#inv-display li{
+    background-color: var(--Accent1-Color);
+    border-radius: 20px;
+    border: solid 1px black;
+}
+#inv-display li a img {
+    border-radius: 20px;
+    width: 250px;
+}
+
+.namePrice {
+    display: grid;
+    place-items: center;
+}
+
+.namePrice h2 {
+    max-width: 250px;
+    text-align: center;
+}
+
+.namePrice h2 a{
+    align-self: center;
+}
+
+.namePrice hr {
+    width: 100%;
+    height: 5px;
+    background-color: var(--Title-color);
+}
+
+/* Car */
+
+#car-display-details {
+    display: grid;
+    place-items: center;
+}
+
+#car-display-details img {
+    width: 90%;
+}
+
+.carEspifications {
+    padding: 0px 10px;
+}
+
+.carEspifications h2.price {
+    background-color: #fdff9f;
+    padding: 10px 0px;
+}
+
+.carDetailsInfo2 {
+    background-color: #fdff9f;
+    padding: 10px 0px;
+    margin: 5px 0px;
+}
+
+.carDetailsInfo h2, .carDetailsInfo p, .carDetailsInfo2 h2, .carDetailsInfo2 p {
+    display: inline-block; 
+    margin: 0; 
+    vertical-align: middle; 
+}
+
+.carDetailsInfo h2, .carDetailsInfo2 h2 {
+    margin-right: 10px;
+}
+
+.carDetailsInfo, .carDetailsInfo2 {
+    padding: 10px;
+}
+
+/* Login */
+
+.formLogin {
+    background-color: var(--Accent2-color);
+    display: flex;
+    flex-direction: column;   
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: solid 10px var(--Accent1-Color);
+}
+
+.formLogin label, .formLogin p {
+    color: var(--Accent1-Color);
+}
+
+.formLogin button {
+    padding: 10px;
+    color: #010a18;
+    background-color: #fffb00;
+    border: solid 2px #ffffff;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px; 
+  font-weight: bold;
+}
+
+.formGroup input {
+  display: block;
+  width: 120%;
+  box-sizing: border-box; 
+  padding: 8px;
+}
+
+.formGroup span {
+  display: inline-block; 
+  max-width: 200px;
+  color: var(--Accent1-Color);
+}
+
+.SingUp {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.SingUp a {
+    color: var(--Accent1-Color);
+}
+
+input:required:invalid, input:focus:invalid {
+ background-color: #ff00004b;
+}
+ input:required:valid {
+ background-color: #00ff224b;
+ }
+
+.formsInv {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    color: var(--Accent1-Color);
+}
+
+.formsInv legend {
+    padding: 20px;
+}
+
+.formInformation {
+    border: solid 2px #fffb00;
+    display: flex;
+    flex-direction: column; 
+    gap: 8px; /* espacio entre elementos */
+    padding: 10px;
+    margin: 20px;
+}
+
+.formInformation input {
+    width: 55%;
+}
+
+.formInformation button {
+    width: 80%;
+}
+.addInformation {
+    grid-column: 2/3;
+    background-color: var(--Accent2-color);
+}

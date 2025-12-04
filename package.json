@@ -1,37 +1,32 @@
 {
-  "name": "outside",
-  "version": "2.0.0",
-  "description": "Boilerplate for WDD 330 SleepOutside project",
-  "main": "main.js",
-  "type": "module",
+  "name": "wdd330",
+  "version": "1.0.0",
+  "description": "Project for WDD 330",
+  "main": "server.js",
   "scripts": {
-    "start": "vite",
-    "build": "vite build --emptyOutDir",
-    "lint": "eslint *.js src/**/*.js",
-    "format": "prettier --ignore-path ./.gitignore --write \"./**/*.{html,json,js,ts,css}\"",
-    "test": "jest",
-    "preview": "vite preview"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "author": "Shane Thompson",
+  "author": "",
   "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.0",
+    "connect-flash": "^0.1.1",
+    "connect-pg-simple": "^10.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.10",
+    "express": "^4.18.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-messages": "^1.0.1",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.8.0"
+  },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-plugin-import": "^2.29.1",
-    "jest": "^29.7.0",
-    "prettier": "^3.2.5",
-    "vite": "^5.4.7"
+    "nodemon": "^3.1.0"
   },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
-  },
-  "browserslist": [
-    "last 3 and_chr versions",
-    "last 3 chrome versions",
-    "last 3 opera versions",
-    "last 3 ios_saf versions",
-    "last 3 safari versions"
-  ]
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
 }
