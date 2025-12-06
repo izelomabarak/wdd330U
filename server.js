@@ -1,10 +1,4 @@
-/* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
-/* ***********************
- * Require Statements
- *************************/
+// Statements
 const session = require("express-session")
 const pool = require('./database/')
 const express = require("express")
@@ -18,9 +12,7 @@ const utilities = require("./utilities")
 const accountRoute = require("./routes/accountRoute")
 const bodyParser = require("body-parser")
 
-/* ***********************
- * Middleware
- * ************************/
+// Midelware
  app.use(session({
   store: new (require('connect-pg-simple')(session))({
     createTableIfMissing: true,
@@ -44,24 +36,21 @@ app.use(function(req, res, next){
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-/* ***********************
- * View Engine and Templates
- *************************/
+
+// Templates
 app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
-/* ***********************
- * Routes
- *************************/
+// Stated Routes
 app.use(static)
-// Index route
+// Home
 app.get("/", utilities.handleErrors(homeController.buildHome))
-// Inventory routes
+// Inventory
 app.use("/inv", utilities.handleErrors(inventoryRoute))
-// Account routes
+// Account
 app.use("/account", utilities.handleErrors(accountRoute))
-// File Not Found Route - must be last route in list
+// Not Found
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we dont find that page.'})
 })

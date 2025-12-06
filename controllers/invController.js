@@ -3,40 +3,35 @@ const utilities = require("../utilities/")
 
 const invCont = {}
 
-/* ***************************
- *  Build inventory by classification view
- * ************************** */
-invCont.buildByClassificationId = async function (req, res, next) {
-  const classification_id = req.params.classificationId
-  const data = await invModel.getInventoryByClassificationId(classification_id)
-  const grid = await utilities.buildClassificationGrid(data)
+// category list
+invCont.buildByCategoryId = async function (req, res, next) {
+  const category_id = req.params.categoryId
+  const data = await invModel.getCategoryItems(category_id)
+  const rows = await utilities.buildCategoryList(data)
   let nav = await utilities.getNav()
-  const className = data[0].classification_name
-  res.render("./inventory/classification", {
-    title: className + " vehicles",
+  const className = data[0].category_name
+  res.render("./inventory/data", {
+    title: className + " Agrochemicals",
     nav,
-    grid,
+    rows,
   })
 }
 
-invCont.buildByInventoryId = async function (req, res, next) {
-  const inventoryId = req.params.inventoryId
-  const data = await invModel.getCarByInventoryId(inventoryId)
-  const grid = await utilities.buildCarDetailsGrid(data)
+// agrochemical list
+invCont.buildByElementId = async function (req, res, next) {
+  const elementId = req.params.elementId
+  const data = await invModel.getAgrochemicalsById(elementId)
+  const rows = await utilities.buildAgrochemicalsDetails(data)
   let nav = await utilities.getNav()
-  const carName = `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`
-  res.render("./inventory/classification", {
+  const carName = data[0].item_name
+  res.render("./inventory/data", {
     title: carName,
     nav,
-    grid,
+    rows,
   })
 }
 
-/* ****************************************
- * Middleware For Handling Errors
- * Wrap other function in this for 
- * General Error Handling
- **************************************** */
+// errors handeler
 invCont.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
   module.exports = invCont

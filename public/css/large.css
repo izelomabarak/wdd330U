@@ -1,10 +1,10 @@
 :root {
     --styling-font-title: Tektur, Georgia, serif;
     --styling-font-text: Raleway, Georgia, sans-serif;
-    --Accent1-Color: #fffb00;
-    --Accent2-color: #060033;
-    --Title-color: #010a18;
-    --Text-color: #fcff47;
+    --Accent1-Color: #eae6e6;
+    --Accent2-color: #060a42;
+    --Title-color: #02085a;
+    --Text-color: #50f252;
     text-decoration: none;
 }
 
@@ -13,29 +13,34 @@
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     }
     /* home */
-    body {
-        background-image: url('/images/site/small_check.jpg');
+    .hero {
+        position: relative;
+
+        & .introduction {
+            position: absolute;
+            top: -5%;
+            width: 90%;
+            margin: 20px;
+            padding: .5rem;
+            background-color: #02085a91;  
+            color: var(--Text-color);  
+        }
     }
-    div.box {
-        margin-left: 10%;
-        width: 80%;
-        background-color: aliceblue;
-    }
-    .extras {
+
+    .information {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
-    .upgrades {
-        grid-column: 1/2;
-        grid-row: 1/2;
+
+    .vission, .mission{
+        color: var(--Text-color);
+        background: var(--Accent2-color);
+        margin: 10px;
     }
-    .reviews {
-        grid-column: 2/3;
-        grid-row: 1/2;
-    }
-    /* Inv */
-    #inv-display{
-    grid-template-columns: 1fr 1fr;
+
+    /* footer */
+    footer {
+        grid-template-columns: 1fr 1fr 1fr;
     }
 }
 

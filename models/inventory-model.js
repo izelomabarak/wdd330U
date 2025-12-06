@@ -1,54 +1,44 @@
 const pool = require("../database/")
 
-/* ***************************
- *  Get all classification data
- * ************************** */
-async function getClassifications(){
-  return await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
+// get category
+async function getCategory(){
+  return await pool.query("SELECT * FROM public.category ORDER BY category_name")
 }
 
-/* ***************************
- *  Get all inventory items and classification_name by classification_id
- * ************************** */
-async function getInventoryByClassificationId(classification_id) {
+// get category items
+async function getCategoryItems(category_id) {
   try {
     const data = await pool.query(
-      `SELECT * FROM public.inventory AS i 
-      JOIN public.classification AS c 
-      ON i.classification_id = c.classification_id 
-      WHERE i.classification_id = $1`,
-      [classification_id]
+      `SELECT * FROM public.item AS i 
+      JOIN public.category AS c 
+      ON i.category_id = c.category_id 
+      WHERE i.category_id = $1`,
+      [category_id]
     )
     return data.rows
   } catch (error) {
-    console.error("getclassificationsbyid error " + error)
+    console.error("getCategoryItems error " + error)
   }
   console.log(data)
 }
 
-/* ***************************
- *  Get Car items by inventory_Id
- * ************************** */
-async function getCarByInventoryId(inventory_Id) {
+// get agrochemicals items
+async function getAgrochemicalsById(item_Id) {
   try {
     const data = await pool.query(
-      `SELECT * FROM public.inventory 
-      WHERE inv_id = $1`,
-      [inventory_Id]
+      `SELECT * FROM public.item 
+      WHERE item_id = $1`,
+      [item_Id]
     )
     return data.rows
   } catch (error) {
-    console.error("getclassificationsbyid error " + error)
+    console.error("getAgrochemicalsById error " + error)
   }
 }
 
-/* ****************************************
- * Middleware For Handling Errors
- * Wrap other function in this for 
- * General Error Handling
- **************************************** */
-getClassifications.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
-getInventoryByClassificationId.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
-getCarByInventoryId.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+// errors handeler
+getCategory.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+getCategoryItems.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+getAgrochemicalsById.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
-module.exports = {getClassifications, getInventoryByClassificationId, getCarByInventoryId };
+module.exports = {getCategory, getCategoryItems, getAgrochemicalsById };
