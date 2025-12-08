@@ -99,10 +99,49 @@ article {
 }
 
 /* Inventory */
+#inv-display {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 100%;
+    place-items: center;
 
+    & li {
+        background-color: var(--Accent2-color);
+        color: var(--Text-color);
+        font-family: var(--styling-font-title);
+        margin: 20px ;
+        width: 60%;
+        padding: 20px;
+        max-width: 80%;
+        display: grid;
+        grid-template-columns: 100%;
+        place-items: center;
+
+        & a {
+            text-decoration: none;
+            color: var(--Text-color);
+        }
+
+        & span {
+            font-size: 2rem;
+        }
+    }
+}
 
 /* Element Data */
+.divRows {
+    display: grid;
+    grid-template-columns: 15% 70% 15%;
+}
 
+#agrochemicals-details {
+    grid-column: 2/3;
+    display: grid;
+    place-items: center;
+    color: var(--Title-color);
+    background-color: var(--Accent1-Color);
+    padding: 30px;
+}
 
 /* Login */
 

@@ -4,9 +4,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
-/* ****************************************
-*  Deliver login view
-* *************************************** */
+//login view
 async function buildLogin(req, res, next) {
   let nav = await utilities.getNav()
   res.render("./account/login", {
@@ -16,9 +14,7 @@ async function buildLogin(req, res, next) {
   })
 }
 
-/* ****************************************
-*  Deliver registration view
-* *************************************** */
+//registration view
 async function buildRegister(req, res, next) {
   let nav = await utilities.getNav()
   res.render("./account/registration", {
@@ -28,82 +24,33 @@ async function buildRegister(req, res, next) {
   })
 }
 
-/* ****************************************
-*  Deliver account management view
-* *************************************** */
-async function buildManagement (req, res, next) {
-  let nav = await utilities.getNav()//getAccountById
-  const level = res.locals.loggedin
-  const AccountId = res.locals.accountData.account_id
-  const accountData = await accountModel.getAccountById(AccountId)
-  if (level === 2){
-    const grid = `<h2>Welcome ${accountData.account_firstname}</h2>
-    <h3>Edit Account</h3>
-    <p>
-    Modify or update account information
-    <a href="/account/update-view/${AccountId}">Update account information</a>.
-    </p>
-    
-    <h3>Inventory Management</h3>
-    <p>
-    Manage Inventory
-    <a href="/inv/">Inventory Management</a>.
-    </p>
-    `
-    res.render("./account/index", {
-      title: "Acount Management",
-      nav,
-      grid,
-      errors: null
-  })} else {
-    const grid = `<h2>Welcome ${accountData.account_firstname}</h2>
-    <h3>Edit Account</h3>
-    <p>
-    Modify or update account information
-    <a href="/account/update-view/${AccountId}">Update account information</a>.
-    </p>
-    `
-    res.render("./account/index", {
-      title: "Acount Management",
-      nav,
-      grid,
-      errors: null
+// account view
+async function buildAccount (req, res, next) {
+  const name = localStorage.getItem("accountName");
+  const grid = `<h2>Welcome ${name}</h2>`
+  res.render("./account/index", {
+    title: "Account",
+    nav,
+    grid,
+    errors: null
   })
-  }
 }
 
-/* **************************************** 
-*  Process Registration 
-* *************************************** */ 
+//registration 
 async function registerAccount(req, res) {
   let nav = await utilities.getNav();
-  const { account_firstname, account_lastname, account_email, account_password } = req.body;
+  const { enter_firstname, enter_lastname, enter_email, enter_password } = req.body;
 
-  // Hash the password
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(account_password, 10);
-  } catch (error) {
-    req.flash("notice", "Sorry, there was an error processing your registration.");
-    return res.status(500).render("account/register", {
-      title: "Registration",
-      nav,
-      errors: null,
-    });
-  }
-
-  // Register the account
   const regResult = await accountModel.registerAccount(
-    account_firstname,
-    account_lastname,
-    account_email,
-    hashedPassword
+    enter_firstname,
+    enter_lastname,
+    enter_email,
+    enter_password
   );
-
   if (regResult.rowCount > 0) {
     req.flash(
       "notice",
-      `Congratulations, you're registered ${account_firstname}. Please log in.`
+      `Congratulations, you're registered ${enter_firstname}. Please log in.`
     );
     return res.redirect("/account/login");
   } else {
@@ -115,14 +62,13 @@ async function registerAccount(req, res) {
   }
 }
 
-/* ****************************************
- *  Process login request
- * ************************************ */
+//login
 async function accountLogin(req, res) {
   let nav = await utilities.getNav()
-  const { account_email, account_password } = req.body
-  const accountData = await accountModel.getAccountByEmail(account_email)
-  if (!accountData) {
+  const { enter_email, enter_password } = req.body
+  const acountLog = await accountModel.checkLoginAccount(enter_email, enter_password)
+  if (!acountLog) {
+    localStorage.setItem('accountName', acountLog.enter_firstname );
     req.flash("notice", "Please check your credentials and try again.")
     res.status(400).render("account/login", {
       title: "Login",
@@ -132,48 +78,29 @@ async function accountLogin(req, res) {
     })
     return
   }
-  try {
-    if (await bcrypt.compare(account_password, accountData.account_password)) {
-      delete accountData.account_password
-      const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 * 1000 })
-      if(process.env.NODE_ENV === 'development') {
-        res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
-      } else {
-        res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600 * 1000 })
-      }
-      return res.redirect("/account/")
-    }
-    else {
-      req.flash("message notice", "Please check your credentials and try again.")
-      res.status(400).render("account/login", {
-        title: "Login",
-        nav,
-        errors: null,
-        account_email,
-      })
-    }
-  } catch (error) {
-    throw new Error('Access Forbidden')
+  else {
+    req.flash("message notice", "Please check your credentials and try again.")
+    res.status(400).render("account/login", {
+      title: "Login",
+      nav,
+      errors: null,
+      account_email,
+    })
   }
 }
 
+// logout
 async function logout(req, res) {
-  res.clearCookie("jwt");
-  req.flash("notice", `You Logout`)
-  res.redirect("/");
+  localStorage.removeItem('accountName');
 }
 
 
-/* **************************************** 
- * Middleware For Handling Errors
- * Wrap other function in this for 
- * General Error Handling
- **************************************** */ 
+//error handeler
 buildLogin.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 buildRegister.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 registerAccount.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 accountLogin.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
-buildManagement.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+buildAccount.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 logout.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildManagement, logout }
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccount, logout }

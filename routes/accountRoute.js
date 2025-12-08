@@ -5,19 +5,19 @@ const utilities = require("../utilities/")
 const accountController = require("../controllers/accountController")
 const regValidate = require('../utilities/account-validation')
 
-// Route to build account view
-router.get("/", utilities.checkLoginAccount, utilities.handleErrors(accountController.buildManagement));
+//login succcesful view
+router.get("/", utilities.checkLoginAccount, utilities.handleErrors(accountController.buildAccount));
 
-// Route to build account view
+//login view
 router.get("/login", utilities.handleErrors(accountController.buildLogin));
 
-// Route to build account view
+//registration view
 router.get("/registration", utilities.handleErrors(accountController.buildRegister));
 
-// Route to logout account
+//logout action
 router.get("/logout", utilities.handleErrors(accountController.logout));
 
-// Route to submit the acount
+//create acount
 router.post(
   "/registration",
   regValidate.registationRules(),
@@ -25,7 +25,7 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-// Process the login attempt
+//login atemp
 router.post(
   "/login",
   regValidate.loginRules(),
@@ -33,11 +33,7 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
-/* ****************************************
- * Middleware For Handling Errors
- * Wrap other function in this for 
- * General Error Handling
- **************************************** */
+//error handeler
 router.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = router;

@@ -70,7 +70,12 @@ Util.buildAgrochemicalsDetails = async function(data){
   
 // check login
  Util.checkLoginAccount = (req, res, next) => {
-  
+  if (localStorage.getItem("miClave") !== null) {
+    next()
+  } else {
+    req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
  }
 
 // errors handeler
