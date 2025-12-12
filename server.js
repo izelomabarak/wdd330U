@@ -10,7 +10,9 @@ const homeController = require("./controllers/homeController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const utilities = require("./utilities")
 const accountRoute = require("./routes/accountRoute")
+const cartRoute = require("./routes/cartRoute")
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser") 
 
 // Midelware
  app.use(session({
@@ -24,8 +26,11 @@ const bodyParser = require("body-parser")
   name: 'sessionId',
 }))
 
+app.use(cookieParser())
 
-// app.use(utilities.addHeader)
+app.use(utilities.checkJWTToken)
+
+app.use(utilities.addHeader)
 
 // Express Messages Middleware
 app.use(require('connect-flash')())
@@ -50,6 +55,8 @@ app.get("/", utilities.handleErrors(homeController.buildHome))
 app.use("/inv", utilities.handleErrors(inventoryRoute))
 // Account
 app.use("/account", utilities.handleErrors(accountRoute))
+// Cart
+app.use("/cart", utilities.handleErrors(cartRoute))
 // Not Found
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we dont find that page.'})

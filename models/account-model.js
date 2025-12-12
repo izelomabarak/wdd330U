@@ -1,4 +1,3 @@
-const { accountLogin } = require("../controllers/accountController")
 const pool = require("../database/")
 
 //register account
@@ -22,15 +21,15 @@ async function checkExistingAccount(enter_email){
   }
 }
 
-//login account
-async function checkLoginAccount(enter_email, enter_password){
+// get info account
+async function getAccount(enter_email){
   try {
-    const sql = "SELECT * FROM enter WHERE enter_email = $1 AND enter_password = $2"
-    const email = await pool.query(sql, [enter_email, enter_password])
-    return email.rowCount
+    const sql = "SELECT * FROM enter WHERE enter_email = $1"
+    const email = await pool.query(sql, [enter_email])
+    return email.rows[0]
   } catch (error) {
-    return error.message
+    return new Error("No matching email found")
   }
 }
 
-module.exports = { registerAccount, checkExistingAccount, checkLoginAccount };
+module.exports = { registerAccount, checkExistingAccount, getAccount };

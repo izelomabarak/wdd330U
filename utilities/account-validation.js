@@ -3,9 +3,7 @@ const utilities = require(".")
   const { body, validationResult } = require("express-validator")
   const validate = {}
 
-  /*  **********************************
-  *  Registration Data Validation Rules
-  * ********************************* */
+//login registation
   validate.registationRules = () => {
     return [
       body("enter_firstname")
@@ -62,6 +60,7 @@ const utilities = require(".")
     next()
   }
 
+//login rules
   validate.loginRules = () => {
     return [
       body("enter_email")
@@ -84,9 +83,7 @@ const utilities = require(".")
     ]
   }
   
-  /* ******************************
-  * Check data and return errors or continue to registration
-  * ***************************** */
+  //return errors
   validate.checkLogData = async (req, res, next) => {
     const { enter_email } = req.body
     let errors = []

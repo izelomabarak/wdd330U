@@ -153,50 +153,50 @@ article {
     justify-content: center;
     padding: 10px;
     border: solid 10px var(--Accent1-Color);
-}
 
-.formLogin label, .formLogin p {
-    color: var(--Accent1-Color);
-}
+    & label, p {
+        color: var(--Accent1-Color);
+    }
 
-.formLogin button {
-    padding: 10px;
-    color: #010a18;
-    background-color: #fffb00;
-    border: solid 2px #ffffff;
+    & button {
+        padding: 10px;
+        color: #010a18;
+        background-color: #fffb00;
+        border: solid 2px #ffffff;
+    }
 }
 
 .formGroup {
-  margin-bottom: 15px;
-}
+    margin-bottom: 15px;
 
-.formGroup label {
-  display: block;
-  margin-bottom: 5px; 
-  font-weight: bold;
-}
+    & label {
+        display: block;
+        margin-bottom: 5px; 
+        font-weight: bold;
+    }
 
-.formGroup input {
-  display: block;
-  width: 120%;
-  box-sizing: border-box; 
-  padding: 8px;
-}
+    & input {
+        display: block;
+        width: 120%;
+        box-sizing: border-box; 
+        padding: 8px;
+    }
 
-.formGroup span {
-  display: inline-block; 
-  max-width: 200px;
-  color: var(--Accent1-Color);
+    & span {
+        display: inline-block; 
+        max-width: 200px;
+        color: var(--Accent1-Color);
+    }
 }
 
 .SingUp {
     display: flex;
     gap: 5px;
     align-items: center;
-}
 
-.SingUp a {
-    color: var(--Accent1-Color);
+    & a {
+        color: var(--Accent1-Color);
+    }
 }
 
 input:required:invalid, input:focus:invalid {
@@ -204,37 +204,6 @@ input:required:invalid, input:focus:invalid {
 }
  input:required:valid {
  background-color: #00ff224b;
- }
-
-.formsInv {
-    display: grid;
-    grid-template-columns: 25% 50% 25%;
-    color: var(--Accent1-Color);
-}
-
-.formsInv legend {
-    padding: 20px;
-}
-
-.formInformation {
-    border: solid 2px #fffb00;
-    display: flex;
-    flex-direction: column; 
-    gap: 8px; /* espacio entre elementos */
-    padding: 10px;
-    margin: 20px;
-}
-
-.formInformation input {
-    width: 55%;
-}
-
-.formInformation button {
-    width: 80%;
-}
-.addInformation {
-    grid-column: 2/3;
-    background-color: var(--Accent2-color);
 }
 
 /* footer */
