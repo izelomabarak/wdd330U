@@ -1,26 +1,41 @@
-// Statements
-const session = require("express-session")
-const pool = require('./database/')
-const express = require("express")
-const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
-const app = express()
-const static = require("./routes/static")
-const homeController = require("./controllers/homeController")
-const inventoryRoute = require("./routes/inventoryRoute")
-const utilities = require("./utilities")
-const accountRoute = require("./routes/accountRoute")
-const cartRoute = require("./routes/cartRoute")
-const bodyParser = require("body-parser")
-const cookieParser = require("cookie-parser") 
+// Required modules
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const flash = require("connect-flash");
+const path = require("path");
+const pool = require("./database/");
+const env = require("dotenv").config();
 
-app.set("trust proxy", 1)
+// Controllers & Routes
+const utilities = require("./utilities");
+const staticRoutes = require("./routes/static");
+const homeController = require("./controllers/homeController");
+const inventoryRoute = require("./routes/inventoryRoute");
+const accountRoute = require("./routes/accountRoute");
+const cartRoute = require("./routes/cartRoute");
 
+// App init
+const app = express();
+app.set("trust proxy", 1);
+
+// Cache control for Render
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  res.set("Surrogate-Control", "no-store");
+  next();
+});
+
+// Load exchange rates
 utilities.loadExchangeRates()
   .then(() => console.log("Exchange rates loaded"))
   .catch(err => console.error("Failed to load exchange rates", err));
 
-// Midelware
+// Middleware
 app.use(session({
   store: new (require('connect-pg-simple')(session))({
     createTableIfMissing: true,
@@ -34,60 +49,69 @@ app.use(session({
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   }
-}))
+}));
 
-app.use(cookieParser())
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(utilities.checkJWTToken)
+// JWT token check
+app.use(utilities.checkJWTToken);
 
-app.use(utilities.addHeader)
+// Header & navigation
+app.use(utilities.addHeader);
 
-// Express Messages Middleware
-app.use(require('connect-flash')())
-app.use(function(req, res, next){
-  res.locals.messages = require('express-messages')(req, res)
-  next()
-})
+// Flash messages
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.messages = require("express-messages")(req, res);
+  next();
+});
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+// Serve static assets
+app.use(express.static(path.join(__dirname, "public")));
 
-// Templates
-app.set("view engine", "ejs")
-app.use(expressLayouts)
-app.set("layout", "./layouts/layout")
+// Template engine
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "./layouts/layout");
 
-// Stated Routes
-app.use(static)
+// Routes
+app.use(staticRoutes);
+
 // Home
-app.get("/", utilities.handleErrors(homeController.buildHome))
-// Inventory
-app.use("/inv", utilities.handleErrors(inventoryRoute))
-// Account
-app.use("/account", utilities.handleErrors(accountRoute))
-// Cart
-app.use("/cart", utilities.handleErrors(cartRoute))
-// Not Found
-app.use(async (req, res, next) => {
-  next({status: 404, message: 'Sorry, we dont find that page.'})
-})
+app.get("/", utilities.handleErrors(homeController.buildHome));
 
-// Error
+// Inventory
+app.use("/inv", utilities.handleErrors(inventoryRoute));
+
+// Account
+app.use("/account", utilities.handleErrors(accountRoute));
+
+// Cart
+app.use("/cart", utilities.handleErrors(cartRoute));
+
+// 404 Not Found
+app.use(async (req, res, next) => {
+  next({ status: 404, message: "Sorry, we don’t find that page." });
+});
+
+// Error handler
 app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav()
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  if(err.status == 404){ message = err.message} else {message = 'There was a error. sorry'}
-  res.render("errors/error", {
-    title: err.status || 'Server Error',
+  let nav = await utilities.getNav();
+  console.error(`Error at "${req.originalUrl}": ${err.message}`);
+  let message = err.status === 404 ? err.message : "There was an error. Sorry.";
+  res.status(err.status || 500).render("errors/error", {
+    title: err.status || "Server Error",
     message,
     nav
-  })
-})
+  });
+});
 
-// Local Server Information
-const port = process.env.PORT || 3000
-const host = process.env.HOST
+// Server
+const port = process.env.PORT || 3000;
+const host = process.env.HOST || "0.0.0.0";
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
-})
+app.listen(port, host, () => {
+  console.log(`Server running on ${host}:${port}`);
+});
