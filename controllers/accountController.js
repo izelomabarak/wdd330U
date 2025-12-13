@@ -70,40 +70,50 @@ accountCont.accountLogin = async function (req, res) {
   let nav = await utilitiesnav.getNav()
   const { enter_email, enter_password } = req.body
   const accountLog = await accountModel.getAccount(enter_email)
+
   if (!accountLog) {
-    
     req.flash("notice", "Please check your credentials and try again.")
-    res.status(400).render("account/login", {
+    return res.status(400).render("account/login", {
       title: "Login",
       nav,
       errors: null,
       enter_email,
     })
-    return
   }
-  try {
-    if (enter_password === accountLog.enter_password) {
-      delete accountLog.enter_password
-      const accessToken = jwt.sign(accountLog, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 * 1000 })
-      if(process.env.NODE_ENV === 'development') {
-        res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
-      } else {
-        res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600 * 1000 })
-      }
-      return res.redirect("/account/")
-    }
-    else {
-      req.flash("message notice", "Please check your credentials and try again.")
-      res.status(400).render("account/login", {
-        title: "Login",
-        nav,
-        errors: null,
-        enter_email,
-      })
-    }
-  } catch (error) {
-    throw new Error('Access Forbidden')
+
+  const match = await bcrypt.compare(
+    enter_password,
+    accountLog.enter_password
+  )
+
+  if (!match) {
+    req.flash("notice", "Please check your credentials and try again.")
+    return res.status(400).render("account/login", {
+      title: "Login",
+      nav,
+      errors: null,
+      enter_email,
+    })
   }
+
+  delete accountLog.enter_password
+
+  const accessToken = jwt.sign(
+    accountLog,
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "1h" }
+  )
+
+  const isProd = process.env.NODE_ENV === "production"
+
+  res.cookie("jwt", accessToken, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 1000 * 60 * 60
+  })
+
+  return res.redirect("/account/")
 }
 
 // logout
