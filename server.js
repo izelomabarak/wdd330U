@@ -14,34 +14,21 @@ const cartRoute = require("./routes/cartRoute")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser") 
 
-app.set("trust proxy", 1)
-
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.set('Pragma', 'no-cache');
-  res.set('Expires', '0');
-  res.set('Surrogate-Control', 'no-store');
-  next();
-});
 
 utilities.loadExchangeRates()
   .then(() => console.log("Exchange rates loaded"))
   .catch(err => console.error("Failed to load exchange rates", err));
 
 // Midelware
-app.use(session({
+ app.use(session({
   store: new (require('connect-pg-simple')(session))({
     createTableIfMissing: true,
     pool,
   }),
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   name: 'sessionId',
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  }
 }))
 
 app.use(cookieParser())
@@ -93,9 +80,10 @@ app.use(async (err, req, res, next) => {
 })
 
 // Local Server Information
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 const host = process.env.HOST
 
+// Server Works Rigt
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
+  console.log(`app listening on ${host}:${port}`)
 })
