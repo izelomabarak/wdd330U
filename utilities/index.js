@@ -103,34 +103,34 @@ Util.buildAgrochemicalsDetails = async function(data, exchange){
 
 //check token
 Util.checkJWTToken = (req, res, next) => {
- if (req.cookies.jwt) {
-  jwt.verify(
-   req.cookies.jwt,
-   process.env.ACCESS_TOKEN_SECRET,
-   function (err, accountData) {
+  const token = req.cookies.jwt;
+  if (!token) {
+    // No token: mark as logged out but don't break page
+    res.locals.loggedin = 0;
+    return next();
+  }
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, accountData) => {
     if (err) {
-     req.flash("Please log in")
-     res.clearCookie("jwt")
-     return res.redirect("/account/login")
+      res.clearCookie("jwt");
+      res.locals.loggedin = 0;
+      return next(); // don’t redirect here, just treat as logged out
     }
-    res.locals.accountData = accountData
-    res.locals.loggedin = 1
-    next()
-   })
- } else {
-  next()
- }
-}
+
+    res.locals.accountData = accountData;
+    res.locals.loggedin = 1;
+    next();
+  });
+};
 
 // check log in
- Util.checkLoginAccount = (req, res, next) => {
+Util.checkLoginAccount = (req, res, next) => {
   if (res.locals.loggedin) {
-    next()
-  } else {
-    req.flash("notice", "Please log in.")
-    return res.redirect("/account/login")
-  }
- }
+    return next();
+  } 
+  req.flash("notice", "Please log in.");
+  return res.redirect("/account/login");
+};
 
 // create header
 Util.addHeader = async (req, res, next) => {
@@ -143,7 +143,7 @@ Util.addHeader = async (req, res, next) => {
     res.locals.header += `<option value="${code}">${code}</option>`;
   }
   res.locals.header += '</select>';
-  res.locals.header += '<button type="submit">Login</button>'
+  res.locals.header += '<button type="submit">Set Currency</button>'
   res.locals.header += '</form>'
   if(res.locals.loggedin){
     const name = res.locals.accountData.enter_firstname + " " + res.locals.accountData.enter_lastname
