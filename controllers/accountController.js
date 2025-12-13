@@ -67,26 +67,11 @@ accountCont.registerAccount = async function (req, res) {
 
 //login
 accountCont.accountLogin = async function (req, res) {
-  let nav = await utilitiesnav.getNav()
+  const nav = await utilitiesnav.getNav()
   const { enter_email, enter_password } = req.body
   const accountLog = await accountModel.getAccount(enter_email)
 
-  if (!accountLog) {
-    req.flash("notice", "Please check your credentials and try again.")
-    return res.status(400).render("account/login", {
-      title: "Login",
-      nav,
-      errors: null,
-      enter_email,
-    })
-  }
-
-  const match = await bcrypt.compare(
-    enter_password,
-    accountLog.enter_password
-  )
-
-  if (!match) {
+  if (!accountLog || enter_password !== accountLog.enter_password) {
     req.flash("notice", "Please check your credentials and try again.")
     return res.status(400).render("account/login", {
       title: "Login",
