@@ -7,10 +7,11 @@ const cartCont = {}
 //cart view
 cartCont.buildCart = async function (req, res, next) {
   let id = res.locals.accountData.enter_id
+  let exchange = req.session.currency || "USD"
   let data = await cartModel.getCart(id)
   let nav = await utilitiesnav.getNav()
-  let elements = await utilities.getCart(data)
-  let total = await utilities.getTotal(data)
+  let elements = await utilities.getCart(data, exchange)
+  let total = await utilities.getTotal(data, exchange)
   res.render("./cart/", {
     title: "Your Cart",
     nav,
@@ -23,11 +24,12 @@ cartCont.buildCart = async function (req, res, next) {
 //buy view
 cartCont.buildBuy = async function (req, res, next) {
   let id = res.locals.accountData.enter_id
+  let exchange = req.session.currency || "USD"
   let data = await cartModel.getCart(id)
-  let total = await utilities.getTotal(data)
+  let total = await utilities.getTotal(data, exchange)
   let nav = await utilitiesnav.getNav()
   res.render("./cart/buy", {
-    title: "Login",
+    title: "Buy Your Cart",
     nav,
     total,
     errors: null

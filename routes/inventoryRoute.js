@@ -9,6 +9,11 @@ router.get("/category/:categoryId", utilities.handleErrors(invController.buildBy
 
 router.get("/data/:elementId", utilities.handleErrors(invController.buildByElementId));
 
+//update currency
+router.post(
+  "/currency", utilities.handleErrors(invController.changeCurrency)
+)
+
 // error handeler
 router.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 

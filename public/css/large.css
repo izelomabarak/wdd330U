@@ -45,6 +45,12 @@
     footer {
         grid-template-columns: 1fr 1fr 1fr;
     }
+
+    #forecast {
+        & ul {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 }
 
 @media only screen and (min-width: 1050px) {
@@ -55,5 +61,10 @@
     /* cart */
     #car-display-details{
     grid-template-columns: 1fr 1fr;
+    }
+    #forecast {
+        & ul {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
     }
 }

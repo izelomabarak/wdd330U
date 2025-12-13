@@ -2,6 +2,19 @@ const invModel = require("../models/inventory-model")
 const Util = {}
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+let exchangeRates = {}
+async function loadExchangeRates() {
+  try {
+    const response = await fetch('https://api.frankfurter.app/latest?from=USD')
+    const data = await response.json()
+    exchangeRates = data.rates
+    console.log("Exchange rates ready")
+  } catch (error) {
+    console.error("Exchange API error", error)
+  }
+}
+
+Util.loadExchangeRates = loadExchangeRates;
 
 // create nav
 Util.getNav = async function () {
@@ -19,10 +32,10 @@ Util.getNav = async function () {
 }
 
 // list of items
-Util.buildCategoryList = async function(data){
-  let rows
+Util.buildCategoryList = async function(data, exchange){
+  let rows = ""
   if(data.length > 0){
-    rows = '<ul id="inv-display">'
+    rows += '<ul id="inv-display">'
     data.forEach(agrochemical => { 
       rows += '<li>'
       rows +=  '<a href="../../inv/data/'+ agrochemical.item_id 
@@ -34,8 +47,15 @@ Util.buildCategoryList = async function(data){
       + agrochemical.item_name + ' details">' 
       + agrochemical.item_name + '</a>'
       rows += '</h2>'
+      const priceP = parseFloat(agrochemical.item_price)
+      let priceFinal = 0
+      if (!exchangeRates[exchange]) {
+        priceFinal = priceP
+      } else {
+        priceFinal = priceP * exchangeRates[exchange]
+      }
       rows += '<span>$' 
-      + new Intl.NumberFormat('en-US').format(agrochemical.item_price) + '</span>'
+      + new Intl.NumberFormat('en-US').format(priceFinal) + '</span>'
       rows += '</div>'
       rows += '<form id="updateForm" class="addInformation" action="/cart/add" method="post">'
       rows += '<input type="hidden" name="item_id" value="' + agrochemical.item_id + '">'
@@ -51,20 +71,27 @@ Util.buildCategoryList = async function(data){
 }
 
 // Agrochemicals view
-Util.buildAgrochemicalsDetails = async function(data){
-  let rows
+Util.buildAgrochemicalsDetails = async function(data, exchange){
+  let rows = ""
   if(data.length > 0){
-    rows = '<div id="agrochemicals-details">'
+    rows += '<div id="agrochemicals-details">'
     rows +=  '<img src="/images' + data[0].item_image +'" alt="Image of '+ data[0].item_name +' on his presentation" />'
     rows += '<div class="agrochemicalsData">'
     rows += '<p>Manufacturer: ' + data[0].item_producer + '</p>'
     rows += '<p>Description: ' + data[0].item_description + '</p>'
     rows += '<p>Details: ' + data[0].item_details + '</p>'
     rows += '<p>Amount: ' + data[0].item_amount + '</p>'
-    rows += '<p>Price: ' + data[0].item_price + '</p>'
+    let priceFinal = 0
+    const priceP = parseFloat(data[0].item_price)
+      if (!exchangeRates[exchange]) {
+        priceFinal = priceP
+      } else {
+        priceFinal = priceP * exchangeRates[exchange]
+      }
+    rows += '<p>Price: ' + priceFinal + '</p>'
     rows += '</div>'
     rows += '<form id="updateForm" class="addInformation" action="/cart/add" method="post">'
-    rows += '<input type="hidden" name="item_id" value="' + agrochemical.item_id + '">'
+    rows += '<input type="hidden" name="item_id" value="' + data[0].item_id + '">'
     rows += '<button type="submit">Add to the car</button>'
     rows += '</form>'
     rows += '</div>'
@@ -108,9 +135,19 @@ Util.checkJWTToken = (req, res, next) => {
 // create header
 Util.addHeader = async (req, res, next) => {
   res.locals.header = '';
+  res.locals.header += '<form class="addInformation" action="/inv/currency" method="post">'
+  res.locals.header += '<select name="currency" id="currencyList" required>';
+  res.locals.header += "<option value=''>Choose a Currency</option>"
+  res.locals.header += "<option value='USD'>USD</option>"
+  for (const [code, rate] of Object.entries(exchangeRates)) {
+    res.locals.header += `<option value="${code}">${code}</option>`;
+  }
+  res.locals.header += '</select>';
+  res.locals.header += '<button type="submit">Login</button>'
+  res.locals.header += '</form>'
   if(res.locals.loggedin){
     const name = res.locals.accountData.enter_firstname + " " + res.locals.accountData.enter_lastname
-    res.locals.header += '<a class="buyCart" href="/cart/">Check Your Cart</a>'
+    res.locals.header += '<a href="/cart/">Check Your Cart</a>'
     res.locals.header += '<a title="Click to view account" href="/account/">Welcome ' + name + '</a>';
     res.locals.header += '<a title="Click to logout" href="/account/logout">Logout</a>';
   } else {
@@ -120,10 +157,10 @@ Util.addHeader = async (req, res, next) => {
 }
 
 // list of items
-Util.getCart = async function(data){
-  let rows
+Util.getCart = async function(data, exchange){
+  let rows = ""
   if(data.length > 0){
-    rows = '<ul id="cart-display">'
+    rows += '<ul id="cart-display">'
     data.forEach(agrochemical => { 
       rows += '<li>'
       rows +=  '<a href="../../inv/data/'+ agrochemical.item_id 
@@ -146,11 +183,16 @@ Util.getCart = async function(data){
       rows += '</div>'
       const numberItems = parseFloat(agrochemical.cart_a_quantity)
       const priceP = parseFloat(agrochemical.item_price)
-      const priceFinal = numberItems * priceP
+      let priceFinal = 0
+      if (!exchangeRates[exchange]) {
+        priceFinal = numberItems * priceP
+      } else {
+        priceFinal = (numberItems * priceP) * exchangeRates[exchange]
+      }
       rows += '<div class="values">'
-      rows += '<span>$' 
+      rows += '<span>Price: $' 
       + new Intl.NumberFormat('en-US').format(priceFinal) + '</span>'
-      rows += '<p>' + agrochemical.cart_a_quantity + '</p>'
+      rows += '<p>Quantity: ' + agrochemical.cart_a_quantity + '</p>'
       rows += '</div>'
       rows += '</li>'
     })
@@ -162,8 +204,8 @@ Util.getCart = async function(data){
 }
 
 // list of items
-Util.getTotal = async function(data){
-  let rows
+Util.getTotal = async function(data, exchange){
+  let rows = ""
   let total = 0;
   if(data.length > 0){
     data.forEach(agrochemical => { 
@@ -172,9 +214,17 @@ Util.getTotal = async function(data){
       total = total + cost;
     })
     let taxes = total * .0825
-    const shipping = 40
+    let shipping = 40
     let totalCost = total + taxes + shipping
-    rows = '<span>Total: $' + new Intl.NumberFormat('en-US').format(total) + '</span>'
+    if (!exchangeRates[exchange]) {
+        totalCost = totalCost
+      } else {
+        total = total * exchangeRates[exchange]
+        taxes = taxes * exchangeRates[exchange]
+        shipping = shipping * exchangeRates[exchange]
+        totalCost = totalCost * exchangeRates[exchange]
+    }
+    rows += '<span>Total: $' + new Intl.NumberFormat('en-US').format(total) + '</span>'
     rows += '<span>Taxes: $' + new Intl.NumberFormat('en-US').format(taxes) + '</span>'
     rows += '<span>Shipping: $' + new Intl.NumberFormat('en-US').format(shipping) + '</span>'
     rows += '<span>Final Cost: $' + new Intl.NumberFormat('en-US').format(totalCost) + '</span>'

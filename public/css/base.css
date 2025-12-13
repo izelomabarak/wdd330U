@@ -83,6 +83,20 @@ article {
 .introduction {
     background-color: var(--Accent1-Color);  
     color: var(--Title-color);  
+    animation: slideCartsInt 1s ease-out forwards;
+}
+
+@keyframes slideCartsInt {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+    background: #3419ad;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    background: #060a42bb;
+  }
 }
 
 .vission {
@@ -90,12 +104,27 @@ article {
     background-color: var(--Accent2-color);
     text-align: center;
     margin: 10px 0px;
+    animation: slideCarts 1s ease-out forwards;
+}
+
+@keyframes slideCarts {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+    background: #3419ad;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    background: var(--Accent2-color);
+  }
 }
 
 .mission {
     color: var(--Title-color);
     background: var(--Accent1-Color);
     text-align: center;
+    animation: slideCarts 1s ease-out forwards;
 }
 
 /* Inventory */
@@ -106,16 +135,28 @@ article {
     place-items: center;
 
     & li {
-        background-color: var(--Accent2-color);
+        background-color: #ffffff;
         color: var(--Text-color);
         font-family: var(--styling-font-title);
         margin: 20px ;
         width: 60%;
-        padding: 20px;
+        padding: 50px;
         max-width: 80%;
         display: grid;
         grid-template-columns: 100%;
         place-items: center;
+        animation: slideCarts 1s ease-out forwards;
+
+        & a img {
+
+            max-height: 225px;
+            max-width: 225px;
+            transition: transfrom 0.5s ease;
+        }
+
+        & a img:hover {
+            transform: rotate(15deg);
+        }
 
         & a {
             text-decoration: none;
@@ -125,6 +166,19 @@ article {
         & span {
             font-size: 2rem;
         }
+    }
+}
+
+#updateForm {
+
+    & button {
+        background-color: var(--Accent1-Color);
+        color: var(--Title-color);
+        font-family: var(--styling-font-title);
+    }
+
+    & button:hover {
+        background-color: #b9f2ff ;
     }
 }
 
@@ -154,15 +208,19 @@ article {
     padding: 10px;
     border: solid 10px var(--Accent1-Color);
 
-    & label, p {
+    & label, p, legend, span {
         color: var(--Accent1-Color);
     }
 
     & button {
         padding: 10px;
         color: #010a18;
-        background-color: #fffb00;
+        background-color: #00ff04;
         border: solid 2px #ffffff;
+    }
+
+    & button:hover {
+        background-color: #b0fdb1;
     }
 }
 
@@ -204,6 +262,134 @@ input:required:invalid, input:focus:invalid {
 }
  input:required:valid {
  background-color: #00ff224b;
+}
+
+/* cart  */
+#cart-display {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 100%;
+
+
+    & li {
+        list-style: none;
+        display: grid;
+        justify-items: center;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        background-color: var(--Accent1-Color);
+        border: solid #0000004b;
+        animation: slideCart 1s ease-out forwards;
+    }
+
+    & li h2 a {
+        text-decoration: none;
+        color: var(--Title-color);
+        font-family: var(--styling-font-title);
+    }
+
+    & li img{
+        padding: 20px;
+        width: 70%;
+        transition: transfrom 0.5s ease;
+    }
+
+    & li img:hover {
+        transform: rotate(15deg);
+    }
+}
+
+@keyframes slideCart {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+    background: #c3b5ff;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    background: var(--Accent1-Color);
+  }
+}
+
+.buttons, .values{
+    padding: 20px;
+}
+
+.values{
+    color: var(--Accent2-color);
+    font-family: var(--styling-font-title);
+}
+
+.buttons {
+    & form {
+        margin: 30px;
+    }
+
+    & form button {
+        padding: 10px;
+        background-color: var(--Accent2-color);
+        color: var(--Accent1-Color);
+        font-family: var(--styling-font-title);
+    }
+}
+.total {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    background-color: var(--Accent2-color);
+    border: 20px;
+
+    & span {
+        color: var(--Text-color);
+        font-family: var(--styling-font-title);
+        border: solid #25ce03ce 3px;
+    }
+}
+
+.buyCart {
+    display: block;
+    padding: 10px;
+    background-color: var(--Title-color);
+    color: var(--Accent1-Color);
+    border: solid var(--Accent1-Color) 2px;
+    font-family: var(--styling-font-title);
+    margin: 20px;
+    width: 13%;
+}
+
+.buyCart:hover {
+    background-color: #a99fff;
+}
+
+#forecast {
+    color: var(--Title-color);
+    & p {
+        color: var(--Title-color);
+        font-family: var(--styling-font-text);
+    }
+
+    & ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 100%;
+        place-items: center;
+    }
+
+    & ul li {
+        background-color: #ffffff;
+        color: var(--Text-color);
+        font-family: var(--styling-font-title);
+        margin: 20px ;
+        padding: 10px;
+        display: grid;
+        max-width: 230px;
+        grid-template-columns: 100%;
+        place-items: center;
+        animation: slideCarts 1s ease-out forwards;
+    }
+
+    & ul li p {
+        color: var(--Text-color);
+    }
 }
 
 /* footer */

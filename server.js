@@ -14,6 +14,9 @@ const cartRoute = require("./routes/cartRoute")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser") 
 
+utilities.loadExchangeRates()
+  .then(() => console.log("Exchange rates loaded"))
+  .catch(err => console.error("Failed to load exchange rates", err));
 // Midelware
  app.use(session({
   store: new (require('connect-pg-simple')(session))({
