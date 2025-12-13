@@ -6,25 +6,24 @@ const cartController = require("../controllers/cartController")
 const cartValidate = require('../utilities/cart-validation')
 
 //cart view
-router.get("/", utilities.checkLoginAccount, utilities.handleErrors(cartController.buildCart));
+router.get("/", utilities.handleErrors(cartController.buildCart));
 
 //buy view
-router.get("/buy", utilities.checkLoginAccount, utilities.handleErrors(cartController.buildBuy));
+router.get("/buy", utilities.handleErrors(cartController.buildBuy));
 
 //add cart
 router.post(
-  "/add", utilities.checkLoginAccount, utilities.handleErrors(cartController.addCart)
+  "/add", utilities.handleErrors(cartController.addCart)
 )
 
 //eliminate cart
 router.post(
-  "/eliminate", utilities.checkLoginAccount, utilities.handleErrors(cartController.eliminateCart)
+  "/eliminate", utilities.handleErrors(cartController.eliminateCart)
 )
 
 //buy atemp
 router.post(
   "/buy",
-  utilities.checkLoginAccount,
   cartValidate.buyRules(),
   cartValidate.checkBuyData,
   utilities.handleErrors(cartController.registerPayment)
